@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-const WEDDING = new Date(2026, 3, 15, 16, 0, 0);
+const WEDDING = new Date(2026, 3, 19, 16, 0, 0);
 
 function getRemaining() {
   const now = Date.now();
