@@ -12,10 +12,39 @@ const dmSans = DM_Sans({
   variable: "--font-wedding-body",
 });
 
+function metadataBaseUrl(): URL {
+  const explicit = process.env.NEXT_PUBLIC_SITE_URL;
+  if (explicit) {
+    try {
+      return new URL(explicit);
+    } catch {
+      /* ignore */
+    }
+  }
+  if (process.env.VERCEL_URL) {
+    return new URL(`https://${process.env.VERCEL_URL}`);
+  }
+  return new URL("http://localhost:3000");
+}
+
 export const metadata: Metadata = {
+  metadataBase: metadataBaseUrl(),
   title: "Bia e Arthur — Casamento",
   description:
     "Site do casamento de Bia e Arthur — contagem regressiva e lista de presentes.",
+  openGraph: {
+    title: "Bia e Arthur — Casamento",
+    description:
+      "Site do casamento de Bia e Arthur — contagem regressiva e lista de presentes.",
+    locale: "pt_BR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Bia e Arthur — Casamento",
+    description:
+      "Site do casamento de Bia e Arthur — contagem regressiva e lista de presentes.",
+  },
 };
 
 export default function RootLayout({
