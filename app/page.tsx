@@ -57,7 +57,7 @@ export default function Home() {
             <p className="mt-3 text-wedding-muted">
               Nosso grande dia será em{" "}
               <span className="font-medium text-wedding-ink">
-                20 de março de 2026
+                15 de abril de 2026
               </span>
               . Acompanhe a contagem ao vivo.
             </p>
@@ -67,10 +67,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section
-          id="presentes"
-          className="scroll-mt-6 px-6 py-16 sm:py-20"
-        >
+        <section id="presentes" className="scroll-mt-6 px-6 py-16 sm:py-20">
           <Suspense fallback={<PresentesSectionFallback />}>
             <PresentesSection />
           </Suspense>
