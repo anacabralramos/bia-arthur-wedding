@@ -20,6 +20,11 @@ const remotePatterns: NonNullable<
     hostname: "images.unsplash.com",
     pathname: "/**",
   },
+  {
+    protocol: "https",
+    hostname: "plus.unsplash.com",
+    pathname: "/**",
+  },
 ];
 
 if (supabaseHost) {
