@@ -5,7 +5,11 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { presentearPresente } from "@/app/actions/presentes";
-import type { Presente } from "@/src/utils/supabase";
+import {
+  presenteComPrecoNumerico,
+  presenteEsgotado,
+  type Presente,
+} from "@/src/utils/supabase";
 
 function formatBRL(value: number | string) {
   const n = typeof value === "number" ? value : Number(value);
@@ -93,7 +97,7 @@ export function PresentesGrid({ presentes }: { presentes: Presente[] }) {
           <li
             key={p.id}
             className={`flex flex-col overflow-hidden rounded-2xl border border-wedding-border bg-white shadow-md transition hover:shadow-lg ${
-              p.was_purchased ? "opacity-75" : ""
+              presenteEsgotado(p) ? "opacity-75" : ""
             }`}
           >
             <div className="relative aspect-[4/3] w-full bg-gradient-to-br from-[#ebe6df] to-[#ddd5cb]">
@@ -106,7 +110,7 @@ export function PresentesGrid({ presentes }: { presentes: Presente[] }) {
                   sizes="(max-width: 1023px) 50vw, 33vw"
                 />
               ) : null}
-              {p.was_purchased ? (
+              {presenteEsgotado(p) ? (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/25 p-4">
                   <span className="rounded-full bg-white/95 px-4 py-2 text-center text-sm font-semibold text-wedding-ink shadow-md">
                     Já ganhamos!
@@ -118,16 +122,18 @@ export function PresentesGrid({ presentes }: { presentes: Presente[] }) {
               <h2 className="text-lg font-semibold text-wedding-ink">
                 {p.name}
               </h2>
-              <p className="mt-3 text-xl font-medium text-wedding-accent">
-                {formatBRL(p.price)}
-              </p>
-              {!p.was_purchased ? (
+              {presenteComPrecoNumerico(p) ? (
+                <p className="mt-3 text-xl font-medium text-wedding-accent">
+                  {formatBRL(p.price)}
+                </p>
+              ) : null}
+              {!presenteEsgotado(p) ? (
                 <button
                   type="button"
                   onClick={() => openForm(p)}
                   className="mt-5 w-full rounded-full bg-wedding-accent py-3.5 text-sm font-bold text-white shadow-sm transition hover:bg-wedding-accent-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-wedding-accent focus-visible:ring-offset-2"
                 >
-                  Presentear
+                  {presenteComPrecoNumerico(p) ? "Presentear" : "Reservar"}
                 </button>
               ) : null}
             </div>
@@ -163,8 +169,10 @@ export function PresentesGrid({ presentes }: { presentes: Presente[] }) {
                   Você está reservando:{" "}
                   <span className="font-medium text-wedding-ink">
                     {modal.presente.name}
-                  </span>{" "}
-                  ({formatBRL(modal.presente.price)})
+                  </span>
+                  {presenteComPrecoNumerico(modal.presente) ? (
+                    <> ({formatBRL(modal.presente.price)})</>
+                  ) : null}
                 </p>
                 <label className="mt-5 block text-sm font-medium text-wedding-ink">
                   Nome do convidado

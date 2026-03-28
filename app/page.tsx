@@ -22,11 +22,12 @@ export default function Home() {
             O casamento de
           </p>
           <h1 className="font-wedding-display text-5xl font-normal leading-tight sm:text-6xl md:text-7xl">
-            Bia <span className="text-white/85">&</span> Arthur
+            Ana Beatriz <span className="text-white/85">&</span> Arthur
           </h1>
           <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-white/90 sm:text-lg">
-            Com alegria, convidamos você a celebrar conosco o início de uma nova
-            história. Será uma honra ter você nesse dia tão especial.
+            Nossa história ganha um novo capítulo e ficaremos muito felizes em
+            ter você como testemunha desse amor. Vamos celebrar juntos o início
+            da nossa vida como um só?
           </p>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
             <a
@@ -75,7 +76,7 @@ export default function Home() {
       </main>
 
       <footer className="border-t border-wedding-border bg-white/80 px-6 py-8 text-center text-sm text-wedding-muted">
-        Bia e Arthur — com carinho
+        Ana Beatriz e Arthur — com carinho
       </footer>
     </div>
   );
