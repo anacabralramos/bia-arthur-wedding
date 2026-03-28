@@ -57,7 +57,7 @@ export default function Home() {
             <p className="mt-3 text-wedding-muted">
               Nosso grande dia será em{" "}
               <span className="font-medium text-wedding-ink">
-                15 de abril de 2026
+                19 de abril de 2026
               </span>
               . Acompanhe a contagem ao vivo.
             </p>

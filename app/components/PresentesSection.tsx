@@ -9,10 +9,8 @@ export async function PresentesSection() {
     const supabase = createSupabaseClient();
     const { data, error } = await supabase
       .from("presentes")
-      .select(
-        "id, display_name, name, image_url, price, was_purchased, buyer_name",
-      )
-      .order("display_name", { ascending: true });
+      .select("id, name, image_url, price, was_purchased, buyer_name")
+      .order("name", { ascending: true });
 
     if (error) {
       fetchError = error.message;

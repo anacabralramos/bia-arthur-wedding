@@ -18,7 +18,7 @@ function formatBRL(value: number | string) {
 type ModalState =
   | { mode: "closed" }
   | { mode: "form"; presente: Presente }
-  | { mode: "success"; guestName: string }
+  | { mode: "success"; guestName: string; emailWarning?: string }
   | { mode: "error"; message: string };
 
 export function PresentesGrid({ presentes }: { presentes: Presente[] }) {
@@ -67,7 +67,13 @@ export function PresentesGrid({ presentes }: { presentes: Presente[] }) {
           spread: 70,
           origin: { y: 0.65 },
         });
-        setModal({ mode: "success", guestName: guestName.trim() });
+        setModal({
+          mode: "success",
+          guestName: guestName.trim(),
+          emailWarning: result.emailNotified
+            ? undefined
+            : "O aviso por e-mail não foi enviado. Confira RESEND_API_KEY no servidor (ex.: Vercel → Environment Variables) e os logs da Resend. Com o remetente de teste, só é possível entregar para o e-mail da conta Resend até você verificar um domínio.",
+        });
         router.refresh();
       } else {
         setModal({ mode: "error", message: result.error });
@@ -82,7 +88,7 @@ export function PresentesGrid({ presentes }: { presentes: Presente[] }) {
 
   return (
     <>
-      <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <ul className="grid grid-cols-2 gap-5 lg:grid-cols-3">
         {presentes.map((p) => (
           <li
             key={p.id}
@@ -97,7 +103,7 @@ export function PresentesGrid({ presentes }: { presentes: Presente[] }) {
                   alt=""
                   fill
                   className="object-cover"
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  sizes="(max-width: 1023px) 50vw, 33vw"
                 />
               ) : null}
               {p.was_purchased ? (
@@ -110,9 +116,8 @@ export function PresentesGrid({ presentes }: { presentes: Presente[] }) {
             </div>
             <div className="flex flex-1 flex-col p-5">
               <h2 className="text-lg font-semibold text-wedding-ink">
-                {p.display_name}
+                {p.name}
               </h2>
-              <p className="mt-1 text-sm text-wedding-muted">{p.name}</p>
               <p className="mt-3 text-xl font-medium text-wedding-accent">
                 {formatBRL(p.price)}
               </p>
@@ -157,7 +162,7 @@ export function PresentesGrid({ presentes }: { presentes: Presente[] }) {
                 <p className="mt-2 text-sm text-wedding-muted">
                   Você está reservando:{" "}
                   <span className="font-medium text-wedding-ink">
-                    {modal.presente.display_name}
+                    {modal.presente.name}
                   </span>{" "}
                   ({formatBRL(modal.presente.price)})
                 </p>
@@ -243,6 +248,14 @@ export function PresentesGrid({ presentes }: { presentes: Presente[] }) {
               podemos esperar para celebrar esse dia especial com você — e
               guardaremos esse gesto com muito amor.
             </p>
+            {modal.emailWarning ? (
+              <p
+                className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-left text-sm text-amber-950"
+                role="status"
+              >
+                {modal.emailWarning}
+              </p>
+            ) : null}
             <button
               type="button"
               onClick={dismissSuccess}

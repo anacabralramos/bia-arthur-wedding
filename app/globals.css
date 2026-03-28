@@ -9,7 +9,7 @@
   --wedding-accent: #8b7355;
   --wedding-accent-hover: #6d5a43;
   --wedding-border: #e8e2da;
-  --wedding-hero-overlay: rgba(44, 40, 37, 0.35);
+  --wedding-hero-overlay: rgba(44, 40, 37, 0.58);
 }
 
 @theme inline {

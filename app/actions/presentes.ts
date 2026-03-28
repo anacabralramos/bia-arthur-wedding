@@ -1,10 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { sendGiftReservedNotification } from "@/src/lib/send-gift-notification-email";
 import { createSupabaseClient } from "@/src/utils/supabase";
 
 export type PresentearResult =
-  | { ok: true }
+  | { ok: true; emailNotified: boolean }
   | { ok: false; error: string };
 
 export async function presentearPresente(
@@ -23,13 +24,14 @@ export async function presentearPresente(
     .update({ was_purchased: true, buyer_name: name })
     .eq("id", presenteId)
     .eq("was_purchased", false)
-    .select("id");
+    .select("id, name");
 
   if (error) {
     return { ok: false, error: error.message };
   }
 
-  if (!data?.length) {
+  const row = data?.[0];
+  if (!row) {
     return {
       ok: false,
       error:
@@ -37,7 +39,12 @@ export async function presentearPresente(
     };
   }
 
+  const emailResult = await sendGiftReservedNotification({
+    guestName: name,
+    giftName: row.name,
+  });
+
   revalidatePath("/");
   revalidatePath("/presentes");
-  return { ok: true };
+  return { ok: true, emailNotified: emailResult.ok };
 }
