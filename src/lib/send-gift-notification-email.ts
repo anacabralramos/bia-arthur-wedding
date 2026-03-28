@@ -1,6 +1,6 @@
 import { Resend } from "resend";
 
-const DEFAULT_NOTIFICATION_TO = "arthuraguiar.ah07@gmail.com";
+const DEFAULT_NOTIFICATION_TO = "ana.clara.2cr@gmail.com";
 
 function escapeHtml(text: string): string {
   return text
