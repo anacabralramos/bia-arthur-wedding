@@ -1,6 +1,6 @@
 import { Resend } from "resend";
 
-const DEFAULT_NOTIFICATION_TO = "ana.clara.2cr@gmail.com";
+const DEFAULT_NOTIFICATION_TO = "arthuraguiar.ah07@gmail.com";
 
 function escapeHtml(text: string): string {
   return text
@@ -10,9 +10,7 @@ function escapeHtml(text: string): string {
     .replace(/"/g, "&quot;");
 }
 
-export type SendGiftEmailResult =
-  | { ok: true }
-  | { ok: false; reason: string };
+export type SendGiftEmailResult = { ok: true } | { ok: false; reason: string };
 
 /**
  * Notifies the bride when a guest reserves a gift.
@@ -26,7 +24,7 @@ export type SendGiftEmailResult =
  * - For production: verify your domain in Resend, then set RESEND_FROM_EMAIL
  *   e.g. `Casamento <noreply@seudominio.com>`.
  *
- * Recipient: GIFT_NOTIFICATION_EMAIL or ana.clara.2cr@gmail.com
+ * Recipient: GIFT_NOTIFICATION_EMAIL or arthuraguiar.ah07@gmail.com
  */
 export async function sendGiftReservedNotification(input: {
   guestName: string;
@@ -42,8 +40,7 @@ export async function sendGiftReservedNotification(input: {
 
   const to =
     process.env.GIFT_NOTIFICATION_EMAIL?.trim() || DEFAULT_NOTIFICATION_TO;
-  const from =
-    process.env.RESEND_FROM_EMAIL?.trim() || "onboarding@resend.dev";
+  const from = process.env.RESEND_FROM_EMAIL?.trim() || "onboarding@resend.dev";
 
   const guestSafe = escapeHtml(input.guestName);
   const giftSafe = escapeHtml(input.giftName);
@@ -99,7 +96,8 @@ Casamento Bia & Arthur - 20 de Abril`;
       );
       return {
         ok: false,
-        reason: typeof error.message === "string" ? error.message : "resend_error",
+        reason:
+          typeof error.message === "string" ? error.message : "resend_error",
       };
     }
 
