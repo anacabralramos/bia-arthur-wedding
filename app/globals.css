@@ -1,26 +1,33 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #faf8f5;
+  --foreground: #2c2825;
+  --wedding-cream: #faf8f5;
+  --wedding-ink: #2c2825;
+  --wedding-muted: #6b6560;
+  --wedding-accent: #8b7355;
+  --wedding-accent-hover: #6d5a43;
+  --wedding-border: #e8e2da;
+  --wedding-hero-overlay: rgba(44, 40, 37, 0.35);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-wedding-ink: var(--wedding-ink);
+  --color-wedding-muted: var(--wedding-muted);
+  --color-wedding-cream: var(--wedding-cream);
+  --color-wedding-border: var(--wedding-border);
+  --color-wedding-accent: var(--wedding-accent);
+  --color-wedding-accent-hover: var(--wedding-accent-hover);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+.font-wedding-display {
+  font-family: var(--font-wedding-display), Georgia, "Times New Roman", serif;
 }
