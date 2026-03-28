@@ -1,5 +1,10 @@
+import { Suspense } from "react";
 import { Countdown } from "./components/Countdown";
-import { GIFTS } from "./data/gifts";
+import { PresentesSection } from "./components/PresentesSection";
+import { PresentesSectionFallback } from "./components/PresentesSectionFallback";
+import heroPhoto from "./assets/bia_e_arthur.jpeg";
+
+export const dynamic = "force-dynamic";
 
 export default function Home() {
   return (
@@ -8,8 +13,7 @@ export default function Home() {
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
-            backgroundImage: `linear-gradient(to bottom, var(--wedding-hero-overlay), var(--wedding-hero-overlay)),
-              url("https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=2000&q=80")`,
+            backgroundImage: `linear-gradient(to bottom, var(--wedding-hero-overlay), var(--wedding-hero-overlay)), url("${heroPhoto.src}")`,
           }}
           aria-hidden
         />
@@ -63,40 +67,13 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="presentes" className="scroll-mt-6 px-6 py-16 sm:py-20">
-          <div className="mx-auto max-w-5xl">
-            <h2 className="text-center font-wedding-display text-3xl font-normal text-wedding-ink sm:text-4xl">
-              Lista de presentes
-            </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-center text-wedding-muted leading-relaxed">
-              Montamos uma lista para nos ajudar a construir nosso lar com muito
-              carinho. Sua presença já é o maior presente — se quiser nos
-              presentear, fique à vontade para escolher um item.
-            </p>
-
-            <ul className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {GIFTS.map((title) => (
-                <li
-                  key={title}
-                  className="flex flex-col rounded-2xl border border-wedding-border bg-white p-6 shadow-sm transition hover:shadow-md"
-                >
-                  <div
-                    className="mb-4 aspect-[4/3] w-full rounded-xl bg-gradient-to-br from-[#ebe6df] to-[#ddd5cb]"
-                    aria-hidden
-                  />
-                  <h3 className="flex-1 text-lg font-medium text-wedding-ink">
-                    {title}
-                  </h3>
-                  <button
-                    type="button"
-                    className="mt-5 w-full rounded-full bg-wedding-accent py-3 text-sm font-semibold text-white transition hover:bg-wedding-accent-hover"
-                  >
-                    Presentear
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
+        <section
+          id="presentes"
+          className="scroll-mt-6 px-6 py-16 sm:py-20"
+        >
+          <Suspense fallback={<PresentesSectionFallback />}>
+            <PresentesSection />
+          </Suspense>
         </section>
       </main>
 
