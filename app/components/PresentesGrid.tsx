@@ -119,7 +119,7 @@ export function PresentesGrid({ presentes }: { presentes: Presente[] }) {
               ) : null}
             </div>
             <div className="flex flex-1 flex-col p-5">
-              <h2 className="text-lg font-semibold text-wedding-ink">
+              <h2 className="text-sm font-semibold leading-snug text-wedding-ink lg:text-lg lg:leading-normal">
                 {p.name}
               </h2>
               {presenteComPrecoNumerico(p) ? (
