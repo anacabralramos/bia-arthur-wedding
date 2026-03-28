@@ -88,7 +88,7 @@ export function PresentesGrid({ presentes }: { presentes: Presente[] }) {
 
   return (
     <>
-      <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <ul className="grid grid-cols-2 gap-5 lg:grid-cols-3">
         {presentes.map((p) => (
           <li
             key={p.id}
@@ -103,7 +103,7 @@ export function PresentesGrid({ presentes }: { presentes: Presente[] }) {
                   alt=""
                   fill
                   className="object-cover"
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  sizes="(max-width: 1023px) 50vw, 33vw"
                 />
               ) : null}
               {p.was_purchased ? (
@@ -116,9 +116,8 @@ export function PresentesGrid({ presentes }: { presentes: Presente[] }) {
             </div>
             <div className="flex flex-1 flex-col p-5">
               <h2 className="text-lg font-semibold text-wedding-ink">
-                {p.display_name}
+                {p.name}
               </h2>
-              <p className="mt-1 text-sm text-wedding-muted">{p.name}</p>
               <p className="mt-3 text-xl font-medium text-wedding-accent">
                 {formatBRL(p.price)}
               </p>
@@ -163,7 +162,7 @@ export function PresentesGrid({ presentes }: { presentes: Presente[] }) {
                 <p className="mt-2 text-sm text-wedding-muted">
                   Você está reservando:{" "}
                   <span className="font-medium text-wedding-ink">
-                    {modal.presente.display_name}
+                    {modal.presente.name}
                   </span>{" "}
                   ({formatBRL(modal.presente.price)})
                 </p>

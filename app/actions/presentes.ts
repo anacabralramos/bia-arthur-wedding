@@ -24,7 +24,7 @@ export async function presentearPresente(
     .update({ was_purchased: true, buyer_name: name })
     .eq("id", presenteId)
     .eq("was_purchased", false)
-    .select("id, display_name");
+    .select("id, name");
 
   if (error) {
     return { ok: false, error: error.message };
@@ -41,7 +41,7 @@ export async function presentearPresente(
 
   const emailResult = await sendGiftReservedNotification({
     guestName: name,
-    giftName: row.display_name,
+    giftName: row.name,
   });
 
   revalidatePath("/");
