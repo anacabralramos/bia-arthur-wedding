@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-const WEDDING = new Date(2026, 2, 20, 16, 0, 0);
+const WEDDING = new Date(2026, 3, 20, 16, 0, 0);
 
 function getRemaining() {
   const now = Date.now();
@@ -18,11 +18,13 @@ function getRemaining() {
 }
 
 export function Countdown() {
-  const [remaining, setRemaining] = useState(getRemaining);
+  const [remaining, setRemaining] = useState(() => getRemaining());
 
   useEffect(() => {
-    const id = setInterval(() => setRemaining(getRemaining()), 1000);
-    return () => clearInterval(id);
+    const tick = () => setRemaining(getRemaining());
+    tick();
+    const id = window.setInterval(tick, 1000);
+    return () => window.clearInterval(id);
   }, []);
 
   const units = [
@@ -33,16 +35,16 @@ export function Countdown() {
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
+    <div className="grid grid-cols-2 gap-3 text-wedding-ink sm:grid-cols-4 sm:gap-4">
       {units.map(({ label, value }) => (
         <div
           key={label}
-          className="rounded-xl border border-[var(--wedding-border)] bg-white/80 px-4 py-5 text-center shadow-sm backdrop-blur-sm"
+          className="rounded-xl border border-wedding-border bg-white px-4 py-5 text-center text-wedding-ink shadow-sm"
         >
-          <p className="font-wedding-display text-3xl font-semibold tabular-nums text-[var(--wedding-ink)] sm:text-4xl">
+          <p className="font-wedding-display text-3xl font-semibold tabular-nums text-wedding-ink sm:text-4xl">
             {String(value).padStart(2, "0")}
           </p>
-          <p className="mt-1 text-xs font-medium uppercase tracking-widest text-[var(--wedding-muted)]">
+          <p className="mt-1 text-xs font-medium uppercase tracking-widest text-wedding-muted">
             {label}
           </p>
         </div>
