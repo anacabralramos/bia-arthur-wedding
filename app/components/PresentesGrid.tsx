@@ -13,7 +13,7 @@ import {
 } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { createStaticPix, hasError } from "pix-utils";
-import { presentearPresente } from "@/app/actions/presentes";
+import { notificarPixEnviado, presentearPresente } from "@/app/actions/presentes";
 import {
   presenteComPrecoNumerico,
   presenteEsgotado,
@@ -83,7 +83,7 @@ function buildStaticPixBrCode(presente: Presente): { ok: true; brCode: string } 
 type ModalState =
   | { mode: "closed" }
   | { mode: "pix"; presente: Presente }
-  | { mode: "form"; presente: Presente }
+  | { mode: "form"; presente: Presente; pixEmailWarning?: string }
   | { mode: "success"; guestName: string; emailWarning?: string }
   | { mode: "error"; message: string };
 
@@ -117,9 +117,14 @@ export function PresentesGrid({ presentes }: { presentes: Presente[] }) {
   }, [modal.mode, closeModal]);
 
   useEffect(() => {
-    if (modal.mode !== "form" && modal.mode !== "error") return;
+    if (modal.mode !== "form" && modal.mode !== "error" && modal.mode !== "pix")
+      return;
     const t = window.setTimeout(() => {
-      dialogRef.current?.querySelector<HTMLInputElement>("input:not([readonly])")?.focus();
+      dialogRef.current
+        ?.querySelector<HTMLInputElement>(
+          "#presente-pix-guest-name, input:not([readonly])",
+        )
+        ?.focus();
     }, 0);
     return () => clearTimeout(t);
   }, [modal.mode]);
@@ -136,7 +141,7 @@ export function PresentesGrid({ presentes }: { presentes: Presente[] }) {
     if (presenteComPrecoNumerico(presente)) {
       setModal({ mode: "pix", presente });
     } else {
-      setModal({ mode: "form", presente });
+      setModal({ mode: "form", presente, pixEmailWarning: undefined });
     }
   };
 
@@ -296,26 +301,55 @@ export function PresentesGrid({ presentes }: { presentes: Presente[] }) {
                     >
                       {pixCopied ? "Copiado!" : "Copiar código"}
                     </button>
+                    <label className="w-full text-sm font-medium text-wedding-ink">
+                      Nome do convidado
+                      <input
+                        id="presente-pix-guest-name"
+                        type="text"
+                        value={guestName}
+                        onChange={(e) => setGuestName(e.target.value)}
+                        placeholder="Quem está enviando o Pix"
+                        autoComplete="name"
+                        disabled={isPending}
+                        className="mt-2 w-full rounded-xl border border-wedding-border px-4 py-3 text-wedding-ink outline-none ring-wedding-accent/30 transition focus:border-wedding-accent focus:ring-2 disabled:opacity-50"
+                      />
+                    </label>
                   </div>
                 ) : null}
                 <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-end">
                   <button
                     type="button"
                     onClick={closeModal}
-                    className="rounded-full border border-wedding-border px-5 py-2.5 text-sm font-medium text-wedding-ink transition hover:bg-wedding-cream"
+                    disabled={isPending}
+                    className="rounded-full border border-wedding-border px-5 py-2.5 text-sm font-medium text-wedding-ink transition hover:bg-wedding-cream disabled:opacity-50"
                   >
                     Cancelar
                   </button>
                   {pixPayload?.ok ? (
                     <button
                       type="button"
+                      disabled={isPending || !guestName.trim()}
                       onClick={() => {
-                        setPixCopied(false);
-                        setModal({ mode: "form", presente: modal.presente });
+                        if (modal.mode !== "pix") return;
+                        const presente = modal.presente;
+                        startTransition(async () => {
+                          const result = await notificarPixEnviado(
+                            presente.id,
+                            guestName,
+                          );
+                          setPixCopied(false);
+                          setModal({
+                            mode: "form",
+                            presente,
+                            pixEmailWarning: result.ok
+                              ? undefined
+                              : result.error,
+                          });
+                        });
                       }}
-                      className="rounded-full bg-wedding-accent px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-wedding-accent-hover"
+                      className="rounded-full bg-wedding-accent px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-wedding-accent-hover disabled:opacity-50"
                     >
-                      Já enviei o Pix
+                      {isPending ? "Enviando aviso…" : "Já enviei o Pix"}
                     </button>
                   ) : null}
                 </div>
@@ -339,6 +373,14 @@ export function PresentesGrid({ presentes }: { presentes: Presente[] }) {
                     <> ({formatBRL(modal.presente.price)})</>
                   ) : null}
                 </p>
+                {modal.pixEmailWarning ? (
+                  <p
+                    className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-left text-sm text-amber-950"
+                    role="status"
+                  >
+                    {modal.pixEmailWarning}
+                  </p>
+                ) : null}
                 <label className="mt-5 block text-sm font-medium text-wedding-ink">
                   Nome do convidado
                   <input

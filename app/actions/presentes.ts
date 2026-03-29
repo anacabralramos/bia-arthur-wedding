@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { sendGiftReservedNotification } from "@/src/lib/send-gift-notification-email";
+import { sendPixMarkedNotification } from "@/src/lib/send-pix-notification-email";
 import {
   createSupabaseClient,
   presenteComPrecoNumerico,
@@ -12,6 +13,67 @@ import {
 export type PresentearResult =
   | { ok: true; emailNotified: boolean }
   | { ok: false; error: string };
+
+export type NotificarPixResult =
+  | { ok: true }
+  | { ok: false; error: string };
+
+function formatBRLServer(value: number | string): string {
+  const n = typeof value === "number" ? value : Number(value);
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  }).format(Number.isFinite(n) ? n : 0);
+}
+
+/** Chamado ao clicar em “Já enviei o Pix” (somente presentes com preço ≠ 0). */
+export async function notificarPixEnviado(
+  presenteId: string,
+  donorName: string,
+): Promise<NotificarPixResult> {
+  const name = donorName.trim();
+  if (!name) {
+    return { ok: false, error: "Por favor, informe seu nome." };
+  }
+
+  const supabase = createSupabaseClient();
+
+  const { data: row, error: fetchError } = await supabase
+    .from("presentes")
+    .select("id, name, price")
+    .eq("id", presenteId)
+    .single();
+
+  if (fetchError || !row) {
+    return {
+      ok: false,
+      error: fetchError?.message ?? "Presente não encontrado.",
+    };
+  }
+
+  if (!presenteComPrecoNumerico(row)) {
+    return {
+      ok: false,
+      error: "Este fluxo de Pix não se aplica a este presente.",
+    };
+  }
+
+  const emailResult = await sendPixMarkedNotification({
+    donorName: name,
+    amountBRL: formatBRLServer(row.price),
+    giftName: row.name,
+  });
+
+  if (!emailResult.ok) {
+    return {
+      ok: false,
+      error:
+        "Não foi possível enviar o aviso por e-mail. Confira RESEND_API_KEY e os logs da Resend.",
+    };
+  }
+
+  return { ok: true };
+}
 
 export async function presentearPresente(
   presenteId: string,
@@ -75,12 +137,16 @@ export async function presentearPresente(
     };
   }
 
-  const emailResult = await sendGiftReservedNotification({
-    guestName: name,
-    giftName: row.name,
-  });
+  let emailNotified = true;
+  if (!presenteComPrecoNumerico(current)) {
+    const emailResult = await sendGiftReservedNotification({
+      guestName: name,
+      giftName: row.name,
+    });
+    emailNotified = emailResult.ok;
+  }
 
   revalidatePath("/");
   revalidatePath("/presentes");
-  return { ok: true, emailNotified: emailResult.ok };
+  return { ok: true, emailNotified };
 }
