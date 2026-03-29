@@ -13,7 +13,7 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://bia-arthur-wedding.vercel.app/"),
+  metadataBase: new URL("https://anabeatriz-arthur-wedding.vercel.app/"),
   title: "Bia e Arthur — Casamento",
   description:
     "Site do casamento de Bia e Arthur — contagem regressiva e lista de presentes.",
