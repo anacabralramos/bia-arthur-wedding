@@ -31,7 +31,8 @@ export const metadata: Metadata = {
       {
         // Use o caminho relativo. O Next.js vai unir com a metadataBase
         // gerando o link PERFEITO com uma barra só.
-        url: "https://anabeatriz-arthur-wedding.vercel.app/heart.png",
+        // url: "https://anabeatriz-arthur-wedding.vercel.app/heart.png",
+        url: "/og-image.png",
         width: 1200,
         height: 630,
         alt: "Casamento Bia e Arthur",
