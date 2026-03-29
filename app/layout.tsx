@@ -23,6 +23,13 @@ export const metadata: Metadata = {
       "Site do casamento de Bia e Arthur — contagem regressiva e lista de presentes.",
     locale: "pt_BR",
     type: "website",
+    images: [
+      {
+        url: "https://anabeatriz-arthur-wedding.vercel.app//opengraph-image.png",
+        width: 1200,
+        height: 630,
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
