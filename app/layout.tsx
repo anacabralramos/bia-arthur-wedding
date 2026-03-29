@@ -12,9 +12,25 @@ const dmSans = DM_Sans({
   variable: "--font-wedding-body",
 });
 
+/** Base URL for og:image, og:url, etc. Must match the domain people share (each Vercel deployment has its own VERCEL_URL). */
+function getMetadataBase(): URL {
+  const raw =
+    process.env.NEXT_PUBLIC_SITE_URL?.trim() ||
+    process.env.SITE_URL?.trim();
+  if (raw) {
+    const withProtocol = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+    return new URL(withProtocol);
+  }
+  if (process.env.VERCEL_URL) {
+    return new URL(`https://${process.env.VERCEL_URL}`);
+  }
+  return new URL("http://localhost:3000");
+}
+
+const metadataBase = getMetadataBase();
+
 export const metadata: Metadata = {
-  // Remova a barra do final aqui
-  metadataBase: new URL("https://anabeatriz-arthur-wedding.vercel.app"),
+  metadataBase,
 
   title: "Bia e Arthur — Casamento",
   description:
@@ -26,29 +42,27 @@ export const metadata: Metadata = {
       "Site do casamento de Bia e Arthur — contagem regressiva e lista de presentes.",
     locale: "pt_BR",
     type: "website",
-    url: "https://anabeatriz-arthur-wedding.vercel.app",
+    url: metadataBase.origin,
     images: [
       {
-        // Use o caminho relativo. O Next.js vai unir com a metadataBase
-        // gerando o link PERFEITO com uma barra só.
-        // url: "https://anabeatriz-arthur-wedding.vercel.app/heart.png",
         url: "/og-image.png",
-        width: 1200,
-        height: 630,
+        width: 100,
+        height: 100,
+        type: "image/png",
         alt: "Casamento Bia e Arthur",
       },
     ],
   },
-  // Aproveite para matar o ícone da Vercel na aba do navegador também:
   icons: {
-    icon: "/icon.png",
-    apple: "/icon.png",
+    icon: "/og-image.png",
+    apple: "/og-image.png",
   },
   twitter: {
     card: "summary_large_image",
     title: "Bia e Arthur — Casamento",
     description:
       "Site do casamento de Bia e Arthur — contagem regressiva e lista de presentes.",
+    images: ["/og-image.png"],
   },
 };
 
