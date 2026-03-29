@@ -12,23 +12,8 @@ const dmSans = DM_Sans({
   variable: "--font-wedding-body",
 });
 
-function metadataBaseUrl(): URL {
-  const explicit = process.env.NEXT_PUBLIC_SITE_URL;
-  if (explicit) {
-    try {
-      return new URL(explicit);
-    } catch {
-      /* ignore */
-    }
-  }
-  if (process.env.VERCEL_URL) {
-    return new URL(`https://${process.env.VERCEL_URL}`);
-  }
-  return new URL("http://localhost:3000");
-}
-
 export const metadata: Metadata = {
-  metadataBase: metadataBaseUrl(),
+  metadataBase: new URL("https://bia-arthur-wedding.vercel.app/"),
   title: "Bia e Arthur — Casamento",
   description:
     "Site do casamento de Bia e Arthur — contagem regressiva e lista de presentes.",
@@ -57,9 +42,7 @@ export default function RootLayout({
       lang="pt-BR"
       className={`${playfair.variable} ${dmSans.variable} h-full antialiased`}
     >
-      <body
-        className={`${dmSans.className} min-h-full flex flex-col`}
-      >
+      <body className={`${dmSans.className} min-h-full flex flex-col`}>
         {children}
       </body>
     </html>
