@@ -96,7 +96,7 @@ export function PresentesGrid({ presentes }: { presentes: Presente[] }) {
         {presentes.map((p) => (
           <li
             key={p.id}
-            className={`flex flex-col overflow-hidden rounded-2xl border border-wedding-border bg-white shadow-md transition hover:shadow-lg ${
+            className={`flex h-full flex-col overflow-hidden rounded-2xl border border-wedding-border bg-white shadow-md transition hover:shadow-lg ${
               presenteEsgotado(p) ? "opacity-75" : ""
             }`}
           >
@@ -118,20 +118,22 @@ export function PresentesGrid({ presentes }: { presentes: Presente[] }) {
                 </div>
               ) : null}
             </div>
-            <div className="flex flex-1 flex-col p-5">
-              <h2 className="text-sm font-semibold leading-snug text-wedding-ink lg:text-lg lg:leading-normal">
-                {p.name}
-              </h2>
-              {presenteComPrecoNumerico(p) ? (
-                <p className="mt-3 text-xl font-medium text-wedding-accent">
-                  {formatBRL(p.price)}
-                </p>
-              ) : null}
+            <div className="flex flex-1 flex-col justify-between gap-4 p-5">
+              <div className="min-w-0 space-y-3">
+                <h2 className="text-sm font-semibold leading-snug text-wedding-ink lg:text-lg lg:leading-normal">
+                  {p.name}
+                </h2>
+                {presenteComPrecoNumerico(p) ? (
+                  <p className="text-xl font-medium text-wedding-accent">
+                    {formatBRL(p.price)}
+                  </p>
+                ) : null}
+              </div>
               {!presenteEsgotado(p) ? (
                 <button
                   type="button"
                   onClick={() => openForm(p)}
-                  className="mt-5 w-full rounded-full bg-wedding-accent py-3.5 text-sm font-bold text-white shadow-sm transition hover:bg-wedding-accent-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-wedding-accent focus-visible:ring-offset-2"
+                  className="w-full shrink-0 rounded-full bg-wedding-accent py-3.5 text-sm font-bold text-white shadow-sm transition hover:bg-wedding-accent-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-wedding-accent focus-visible:ring-offset-2"
                 >
                   {presenteComPrecoNumerico(p) ? "Presentear" : "Reservar"}
                 </button>
