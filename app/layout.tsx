@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { DM_Sans, Playfair_Display } from "next/font/google";
 import "./globals.css";
 
@@ -12,8 +13,8 @@ const dmSans = DM_Sans({
   variable: "--font-wedding-body",
 });
 
-/** Base URL for og:image, og:url, etc. Must match the domain people share (each Vercel deployment has its own VERCEL_URL). */
-function getMetadataBase(): URL {
+/** Fallback when `headers()` has no host (e.g. some static analysis). */
+function metadataBaseFromEnv(): URL {
   const raw =
     process.env.NEXT_PUBLIC_SITE_URL?.trim() ||
     process.env.SITE_URL?.trim();
@@ -27,44 +28,57 @@ function getMetadataBase(): URL {
   return new URL("http://localhost:3000");
 }
 
-const metadataBase = getMetadataBase();
+/**
+ * WhatsApp/Facebook resolve og:image against metadataBase. If the build ran without VERCEL_URL
+ * (deploy from local `vercel build`), base was localhost and scrapers ignored the image.
+ * Using the request host fixes the absolute URL for every deployment URL.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  const h = await headers();
+  const rawHost =
+    h.get("x-forwarded-host")?.split(",", 1)[0]?.trim() ||
+    h.get("host")?.trim() ||
+    "";
+  const forwardedProto = h.get("x-forwarded-proto")?.split(",", 1)[0]?.trim();
 
-export const metadata: Metadata = {
-  metadataBase,
+  let metadataBase: URL;
+  const host = rawHost.replace(/^https?:\/\//i, "").split("/")[0] || rawHost;
+  if (host) {
+    const proto =
+      forwardedProto ||
+      (host.startsWith("localhost") || host.startsWith("127.") ? "http" : "https");
+    metadataBase = new URL(`${proto}://${host}`);
+  } else {
+    metadataBase = metadataBaseFromEnv();
+  }
 
-  title: "Bia e Arthur — Casamento",
-  description:
-    "Site do casamento de Bia e Arthur — contagem regressiva e lista de presentes.",
+  const canonical = metadataBase.href.replace(/\/+$/, "");
 
-  openGraph: {
+  return {
+    metadataBase,
     title: "Bia e Arthur — Casamento",
     description:
       "Site do casamento de Bia e Arthur — contagem regressiva e lista de presentes.",
-    locale: "pt_BR",
-    type: "website",
-    url: metadataBase.origin,
-    images: [
-      {
-        url: "/og-image.png",
-        width: 100,
-        height: 100,
-        type: "image/png",
-        alt: "Casamento Bia e Arthur",
-      },
-    ],
-  },
-  icons: {
-    icon: "/og-image.png",
-    apple: "/og-image.png",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Bia e Arthur — Casamento",
-    description:
-      "Site do casamento de Bia e Arthur — contagem regressiva e lista de presentes.",
-    images: ["/og-image.png"],
-  },
-};
+    openGraph: {
+      title: "Bia e Arthur — Casamento",
+      description:
+        "Site do casamento de Bia e Arthur — contagem regressiva e lista de presentes.",
+      locale: "pt_BR",
+      type: "website",
+      url: canonical,
+    },
+    icons: {
+      icon: "/og-image.png",
+      apple: "/og-image.png",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "Bia e Arthur — Casamento",
+      description:
+        "Site do casamento de Bia e Arthur — contagem regressiva e lista de presentes.",
+    },
+  };
+}
 
 export default function RootLayout({
   children,
